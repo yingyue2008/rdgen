@@ -229,11 +229,13 @@ jobs:
           version: ${{ env.LLVM_VERSION }}
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: nightly-2023-10-13-${{ matrix.job.target }} # must use nightly here, because of abi_thiscall feature required
-          targets: ${{ matrix.job.target }}
-          components: "rustfmt"
+        shell: bash
+        env:
+          RUSTUP_PERMIT_COPY_RENAME: 1
+        run: |
+          rustup toolchain install nightly-2023-10-13-${{ matrix.job.target }} --profile minimal --component rustfmt --target ${{ matrix.job.target }} --force-non-host
+          rustup default nightly-2023-10-13-${{ matrix.job.target }}
+
 
       - uses: Swatinem/rust-cache@v2
         with:
